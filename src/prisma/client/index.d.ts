@@ -3341,6 +3341,8 @@ export namespace Prisma {
     url_id: string | null
     ip: string | null
     country: string | null
+    device: string | null
+    os: string | null
     timestamp: Date | null
   }
 
@@ -3349,6 +3351,8 @@ export namespace Prisma {
     url_id: string | null
     ip: string | null
     country: string | null
+    device: string | null
+    os: string | null
     timestamp: Date | null
   }
 
@@ -3357,6 +3361,8 @@ export namespace Prisma {
     url_id: number
     ip: number
     country: number
+    device: number
+    os: number
     timestamp: number
     _all: number
   }
@@ -3367,6 +3373,8 @@ export namespace Prisma {
     url_id?: true
     ip?: true
     country?: true
+    device?: true
+    os?: true
     timestamp?: true
   }
 
@@ -3375,6 +3383,8 @@ export namespace Prisma {
     url_id?: true
     ip?: true
     country?: true
+    device?: true
+    os?: true
     timestamp?: true
   }
 
@@ -3383,6 +3393,8 @@ export namespace Prisma {
     url_id?: true
     ip?: true
     country?: true
+    device?: true
+    os?: true
     timestamp?: true
     _all?: true
   }
@@ -3464,6 +3476,8 @@ export namespace Prisma {
     url_id: string
     ip: string
     country: string
+    device: string
+    os: string
     timestamp: Date
     _count: ClicksCountAggregateOutputType | null
     _min: ClicksMinAggregateOutputType | null
@@ -3489,6 +3503,8 @@ export namespace Prisma {
     url_id?: boolean
     ip?: boolean
     country?: boolean
+    device?: boolean
+    os?: boolean
     timestamp?: boolean
     url?: boolean | UrlsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["clicks"]>
@@ -3498,6 +3514,8 @@ export namespace Prisma {
     url_id?: boolean
     ip?: boolean
     country?: boolean
+    device?: boolean
+    os?: boolean
     timestamp?: boolean
     url?: boolean | UrlsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["clicks"]>
@@ -3507,6 +3525,8 @@ export namespace Prisma {
     url_id?: boolean
     ip?: boolean
     country?: boolean
+    device?: boolean
+    os?: boolean
     timestamp?: boolean
     url?: boolean | UrlsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["clicks"]>
@@ -3516,10 +3536,12 @@ export namespace Prisma {
     url_id?: boolean
     ip?: boolean
     country?: boolean
+    device?: boolean
+    os?: boolean
     timestamp?: boolean
   }
 
-  export type ClicksOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "url_id" | "ip" | "country" | "timestamp", ExtArgs["result"]["clicks"]>
+  export type ClicksOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "url_id" | "ip" | "country" | "device" | "os" | "timestamp", ExtArgs["result"]["clicks"]>
   export type ClicksInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     url?: boolean | UrlsDefaultArgs<ExtArgs>
   }
@@ -3540,6 +3562,8 @@ export namespace Prisma {
       url_id: string
       ip: string
       country: string
+      device: string
+      os: string
       timestamp: Date
     }, ExtArgs["result"]["clicks"]>
     composites: {}
@@ -3969,6 +3993,8 @@ export namespace Prisma {
     readonly url_id: FieldRef<"Clicks", 'String'>
     readonly ip: FieldRef<"Clicks", 'String'>
     readonly country: FieldRef<"Clicks", 'String'>
+    readonly device: FieldRef<"Clicks", 'String'>
+    readonly os: FieldRef<"Clicks", 'String'>
     readonly timestamp: FieldRef<"Clicks", 'DateTime'>
   }
     
@@ -4430,6 +4456,8 @@ export namespace Prisma {
     url_id: 'url_id',
     ip: 'ip',
     country: 'country',
+    device: 'device',
+    os: 'os',
     timestamp: 'timestamp'
   };
 
@@ -4663,6 +4691,8 @@ export namespace Prisma {
     url_id?: StringFilter<"Clicks"> | string
     ip?: StringFilter<"Clicks"> | string
     country?: StringFilter<"Clicks"> | string
+    device?: StringFilter<"Clicks"> | string
+    os?: StringFilter<"Clicks"> | string
     timestamp?: DateTimeFilter<"Clicks"> | Date | string
     url?: XOR<UrlsScalarRelationFilter, UrlsWhereInput>
   }
@@ -4672,6 +4702,8 @@ export namespace Prisma {
     url_id?: SortOrder
     ip?: SortOrder
     country?: SortOrder
+    device?: SortOrder
+    os?: SortOrder
     timestamp?: SortOrder
     url?: UrlsOrderByWithRelationInput
   }
@@ -4684,6 +4716,8 @@ export namespace Prisma {
     url_id?: StringFilter<"Clicks"> | string
     ip?: StringFilter<"Clicks"> | string
     country?: StringFilter<"Clicks"> | string
+    device?: StringFilter<"Clicks"> | string
+    os?: StringFilter<"Clicks"> | string
     timestamp?: DateTimeFilter<"Clicks"> | Date | string
     url?: XOR<UrlsScalarRelationFilter, UrlsWhereInput>
   }, "id">
@@ -4693,6 +4727,8 @@ export namespace Prisma {
     url_id?: SortOrder
     ip?: SortOrder
     country?: SortOrder
+    device?: SortOrder
+    os?: SortOrder
     timestamp?: SortOrder
     _count?: ClicksCountOrderByAggregateInput
     _max?: ClicksMaxOrderByAggregateInput
@@ -4707,6 +4743,8 @@ export namespace Prisma {
     url_id?: StringWithAggregatesFilter<"Clicks"> | string
     ip?: StringWithAggregatesFilter<"Clicks"> | string
     country?: StringWithAggregatesFilter<"Clicks"> | string
+    device?: StringWithAggregatesFilter<"Clicks"> | string
+    os?: StringWithAggregatesFilter<"Clicks"> | string
     timestamp?: DateTimeWithAggregatesFilter<"Clicks"> | Date | string
   }
 
@@ -4868,6 +4906,8 @@ export namespace Prisma {
     id?: string
     ip: string
     country: string
+    device: string
+    os: string
     timestamp: Date | string
     url: UrlsCreateNestedOneWithoutClicksInput
   }
@@ -4877,6 +4917,8 @@ export namespace Prisma {
     url_id: string
     ip: string
     country: string
+    device: string
+    os: string
     timestamp: Date | string
   }
 
@@ -4884,6 +4926,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     ip?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    device?: StringFieldUpdateOperationsInput | string
+    os?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
     url?: UrlsUpdateOneRequiredWithoutClicksNestedInput
   }
@@ -4893,6 +4937,8 @@ export namespace Prisma {
     url_id?: StringFieldUpdateOperationsInput | string
     ip?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    device?: StringFieldUpdateOperationsInput | string
+    os?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4901,6 +4947,8 @@ export namespace Prisma {
     url_id: string
     ip: string
     country: string
+    device: string
+    os: string
     timestamp: Date | string
   }
 
@@ -4908,6 +4956,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     ip?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    device?: StringFieldUpdateOperationsInput | string
+    os?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4916,6 +4966,8 @@ export namespace Prisma {
     url_id?: StringFieldUpdateOperationsInput | string
     ip?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    device?: StringFieldUpdateOperationsInput | string
+    os?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5126,6 +5178,8 @@ export namespace Prisma {
     url_id?: SortOrder
     ip?: SortOrder
     country?: SortOrder
+    device?: SortOrder
+    os?: SortOrder
     timestamp?: SortOrder
   }
 
@@ -5134,6 +5188,8 @@ export namespace Prisma {
     url_id?: SortOrder
     ip?: SortOrder
     country?: SortOrder
+    device?: SortOrder
+    os?: SortOrder
     timestamp?: SortOrder
   }
 
@@ -5142,6 +5198,8 @@ export namespace Prisma {
     url_id?: SortOrder
     ip?: SortOrder
     country?: SortOrder
+    device?: SortOrder
+    os?: SortOrder
     timestamp?: SortOrder
   }
 
@@ -5458,6 +5516,8 @@ export namespace Prisma {
     id?: string
     ip: string
     country: string
+    device: string
+    os: string
     timestamp: Date | string
   }
 
@@ -5465,6 +5525,8 @@ export namespace Prisma {
     id?: string
     ip: string
     country: string
+    device: string
+    os: string
     timestamp: Date | string
   }
 
@@ -5529,6 +5591,8 @@ export namespace Prisma {
     url_id?: StringFilter<"Clicks"> | string
     ip?: StringFilter<"Clicks"> | string
     country?: StringFilter<"Clicks"> | string
+    device?: StringFilter<"Clicks"> | string
+    os?: StringFilter<"Clicks"> | string
     timestamp?: DateTimeFilter<"Clicks"> | Date | string
   }
 
@@ -5663,6 +5727,8 @@ export namespace Prisma {
     id?: string
     ip: string
     country: string
+    device: string
+    os: string
     timestamp: Date | string
   }
 
@@ -5670,6 +5736,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     ip?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    device?: StringFieldUpdateOperationsInput | string
+    os?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5677,6 +5745,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     ip?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    device?: StringFieldUpdateOperationsInput | string
+    os?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5684,6 +5754,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     ip?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    device?: StringFieldUpdateOperationsInput | string
+    os?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

@@ -3,11 +3,12 @@ import helmet from "helmet";
 import type { Request, Response } from "express";
 import { initializeGoogleAuth, initializePrismaClient, initializeRedis, initializeSQS, areAllEnvsLoaded } from "./utils/initialiser.js";
 import authRouter from "./routes/auth/index.js";
+import analyticsRouter from "./routes/analytics/index.js";
 import dotenv from 'dotenv';
 import { authorizeUser } from "./middlewares/auth.js";
 import urlRouter from "./routes/url/index.js";
 import requestIp from "request-ip";
-import { logUrlVisit } from "./utils/helpers.js";
+import { getOverAllAnalytics, logUrlVisit } from "./utils/helpers.js";
 import { REDIS_ALIAS_CACHE_TIME } from "./utils/constants.js";
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(requestIp.mw());
 
 app.use("/auth", authRouter);
 app.use("/urls", authorizeUser, urlRouter);
+app.use("/analytics", authorizeUser, analyticsRouter);
 app.get("/health", (req: Request, res: Response) => {
     res.status(200).json({ message: "Server is healthy" });
 });
@@ -61,6 +63,9 @@ app.get("/:alias", async (req: Request, res: Response) => {
             message: "An unexpected error occurred while redirecting. Please try again later."
         });
     }
+});
+app.get("/overall", (req: Request, res: Response) =>{
+    getOverAllAnalytics(req, res);
 });
 
 const PORT = process.env.PORT || 3000;

@@ -146,6 +146,8 @@ exports.Prisma.ClicksScalarFieldEnum = {
   url_id: 'url_id',
   ip: 'ip',
   country: 'country',
+  device: 'device',
+  os: 'os',
   timestamp: 'timestamp'
 };
 

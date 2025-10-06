@@ -3,8 +3,9 @@ import * as uap from 'ua-parser-js';
 import { nanoid } from "nanoid";
 import { PRISMA_CLIENT, SQS_CLIENT } from "../index.js";
 import { SendMessageCommand } from "@aws-sdk/client-sqs";
-import { Request } from "express";
+import type { Request, Response } from "express";
 import requestIp from "request-ip";
+    
 
 export const getUniqueAlias = async (): Promise<string> => {
 
@@ -59,5 +60,48 @@ export const logUrlVisit = (req: Request, alias: string) => {
 
     } catch (e) {
         console.log("ERROR logging the request!");
+    }
+}
+
+export const getOverAllAnalytics = async (req: Request, res: Response) => {
+    try {
+        const totalUrls = await PRISMA_CLIENT.urls.count();
+        const totalClicks = await PRISMA_CLIENT.clicks.count();
+        const uniqueUserIPsRaw = await PRISMA_CLIENT.clicks.findMany({
+            distinct: ["ip"],
+            select: { ip: true }
+        });
+        const totalUniqueUsers = uniqueUserIPsRaw.length;
+
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - 30);
+
+        const clicksOverTimeRaw = await PRISMA_CLIENT.clicks.groupBy({
+            by: ["timestamp"],
+            _count: { id: true },
+            where: {
+                timestamp: { gte: startDate }
+            }
+        });
+        const clicksOverTime: Record<string, number> = {};
+        
+        clicksOverTimeRaw.forEach(c => {
+            const day = c.timestamp.toISOString().split("T")[0]; 
+            if(!day) return;
+            clicksOverTime[day] = (clicksOverTime[day] || 0) + c._count.id;
+        });
+
+        res.status(200).json({
+            total_urls: totalUrls,
+            total_clicks: totalClicks,
+            total_unique_users: totalUniqueUsers,
+            usage_trends_last_30_days: clicksOverTime
+        });
+    } catch (err) {
+        console.error("Error fetching overall analytics:", err);
+        res.status(500).json({
+            message: "Error fetching overall analytics. Please try again later."
+        });
     }
 }

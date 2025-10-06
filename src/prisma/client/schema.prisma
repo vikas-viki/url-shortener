@@ -46,6 +46,8 @@ model Clicks {
   url_id    String
   ip        String
   country   String
+  device    String
+  os        String
   timestamp DateTime
   url       Urls     @relation(fields: [url_id], references: [id])
 
