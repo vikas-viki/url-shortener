@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/prisma/client/client.d.ts","./src/prisma/client/default.d.ts","./src/prisma/client/edge.d.ts","./src/prisma/client/index.d.ts","./src/prisma/client/wasm.d.ts","./src/prisma/client/runtime/index-browser.d.ts","./src/prisma/client/runtime/library.d.ts"],"version":"5.9.3"}
