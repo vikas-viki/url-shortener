@@ -8,6 +8,7 @@ import { authorizeUser } from "./middlewares/auth.js";
 import urlRouter from "./routes/url/index.js";
 import requestIp from "request-ip";
 import { logUrlVisit } from "./utils/helpers.js";
+import { REDIS_ALIAS_CACHE_TIME } from "./utils/constants.js";
 
 dotenv.config();
 const app = express();
@@ -51,7 +52,7 @@ app.get("/:alias", async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Short link not found." });
         }
 
-        await REDIS_CLIENT.set(alias, url.target_url, "EX", 60 * 60); // cached for 1 hour
+        await REDIS_CLIENT.set(alias, url.target_url, "EX", REDIS_ALIAS_CACHE_TIME); // cached for 1 hour
 
         return res.redirect(url.target_url);
     } catch (e) {

@@ -12,11 +12,15 @@ export const initializeGoogleAuth = () => {
     const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
     const GOOGLE_REDIRECT_URL = process.env.GOOGLE_REDIRECT_URL!;
 
+    if (global.oAuthClient) return global.oAuthClient;
+
     const oAuthClient: OAuth2Client = new google.auth.OAuth2(
         GOOGLE_CLIENT_ID.toString(),
         GOOGLE_CLIENT_SECRET.toString(),
         GOOGLE_REDIRECT_URL.toString()
     );
+
+    global.oAuthClient = oAuthClient;
 
     return oAuthClient;
 }
@@ -24,7 +28,11 @@ export const initializeGoogleAuth = () => {
 export const initializeRedis = () => {
     const REDIS_URL = process.env.REDIS_URL!;
 
+    if (global.redisClient) return global.redisClient;
+
     const redisClient = new Redis(REDIS_URL.toString());
+
+    global.redisClient = redisClient;
 
     return redisClient;
 }
@@ -32,6 +40,8 @@ export const initializeRedis = () => {
 export const initializeSQS = () => {
     const SQS_ACCESS_KEY = process.env.SQS_ACCESS_KEY!;
     const SQS_SECRET_ACCESS_KEY = process.env.SQS_SECRET_ACCESS_KEY!;
+
+    if (global.sqsClient) return global.sqsClient;
 
     const sqs = new SQSClient({
         region: "ap-south-1",
@@ -41,10 +51,12 @@ export const initializeSQS = () => {
         }
     });
 
+    global.sqsClient = sqs;
+
     return sqs;
 }
 
-export const areAllEnvsLoaded =()=>{
+export const areAllEnvsLoaded = () => {
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
     const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
     const GOOGLE_REDIRECT_URL = process.env.GOOGLE_REDIRECT_URL;
@@ -67,21 +79,25 @@ export const areAllEnvsLoaded =()=>{
 
     }
 
-    const JWT_SECRET= process.env.JWT_SECRET;
+    const JWT_SECRET = process.env.JWT_SECRET;
 
-    if(!JWT_SECRET){
+    if (!JWT_SECRET) {
         throw new Error("JWT secret not found!");
     }
 
     const SHORT_URL_HOST = process.env.SHORT_URL_HOST;
-    if(!SHORT_URL_HOST){
+    if (!SHORT_URL_HOST) {
         throw new Error("Short Url Host not found!");
-        
+
     }
 }
 
-export const initializePrismaClient  = () =>{
+export const initializePrismaClient = () => {
+    if (global.prismaClient) return global.prismaClient;
+
     const client = new PrismaClient();
+
+    global.prismaClient = client;
 
     return client;
 }

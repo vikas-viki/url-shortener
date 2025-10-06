@@ -1,4 +1,4 @@
-import { DeleteMessageCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
+import { DeleteMessageCommand, ReceiveMessageCommand, ReceiveMessageResult } from "@aws-sdk/client-sqs";
 import { PRISMA_CLIENT, REDIS_CLIENT, SQS_CLIENT } from "../index.js";
 import { DEFAULT_IP_COUNTRY, REDIS_URLID_CACHE_TIME } from "./constants.js";
 import { SQS_MESSAGE } from "../types/index.js";
@@ -26,7 +26,7 @@ export const pollForMessages = async () => {
             QueueUrl: SQS_URL,
             WaitTimeSeconds: 20,
         })
-    );
+    ) as ReceiveMessageResult;
 
     if (!resp.Messages || resp.Messages.length === 0) return;
 

@@ -4,11 +4,11 @@ import { CreateURLScheema } from "../../utils/zod.js";
 import { PRISMA_CLIENT } from "../../index.js";
 import { getUniqueAlias } from "../../utils/helpers.js";
 import { SHORT_URL_HOST } from "../../utils/constants.js";
-import { generateLimitter } from "../../middlewares/rate-limit.js";
+import { rateLimitMiddleware } from "../../middlewares/rate-limit.js";
 
 const router: express.Router = Router();
 
-router.post("/create", generateLimitter(60, 24 * 60 * 60), async (req: Request, res: Response) => {
+router.post("/create", rateLimitMiddleware, async (req: Request, res: Response) => {
     try {
         const body = CreateURLScheema.safeParse(req.body);
         if (!body.success) {

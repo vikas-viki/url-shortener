@@ -1,5 +1,6 @@
 
 import * as express from "express";
+import { PrismaClient } from "../prisma/client";
 
 declare global {
   namespace Express {
@@ -7,6 +8,13 @@ declare global {
       user_id?: string;
     }
   }
+}
+
+declare global {
+  var oAuthClient: OAuth2Client | undefined;
+  var redisClient: Redis;
+  var sqsClient: SQSClient;
+  var prismaClient: PrismaClient;
 }
 
 export interface UserJWTPayload {
@@ -23,12 +31,12 @@ export type GoogleSigninResponse = {
 }
 
 export interface SQS_MESSAGE {
-    alias: string;
-    ip: string;
-    timeStamp: number;
-    device: string;
-    os: string;
-    browser: string
-    country: string
-    [key: string]: any;
+  alias: string;
+  ip: string;
+  timeStamp: number;
+  device: string;
+  os: string;
+  browser: string
+  country: string
+  [key: string]: any;
 }

@@ -1,30 +1,20 @@
-import requestIp from "request-ip";
-import rateLimit from "express-rate-limit";
-import type { Request } from "express";
-import { REDIS_CLIENT } from "../index.js";
-import RedisStore, { RedisReply } from "rate-limit-redis";
+import { RateLimiterRedis } from 'rate-limiter-flexible';
+import { initializeRedis } from '../utils/initialiser.js';
+import type { Request, Response, NextFunction } from 'express';
 
-export const generateLimitter = (limit: number, seconds: number) => {
+const rateLimiter = new RateLimiterRedis({
+    storeClient: initializeRedis(),
+    keyPrefix: 'rl',
+    points: 60,
+    duration: 5 * 60 * 60 // 60 creations per 5 hours
+});
 
-    const rateLimiiter = rateLimit({
-        windowMs: seconds,
-        max: limit,
-        standardHeaders: true,
-        legacyHeaders: false,
-        store: new RedisStore({
-            sendCommand: (...args: string[]): Promise<RedisReply> =>
-                REDIS_CLIENT.call(args as any) as Promise<RedisReply>,
-        }),
-        keyGenerator: (req: Request) => {
-            const clientIp = requestIp.getClientIp(req);
-            return req.user_id || clientIp || req.ip || "UNKNOWN";
-        },
-        handler: (_, res) => {
-            res.status(429).json({
-                message: "Too many requests. Please wait a moment before retrying."
-            });
-        },
-    });
-
-    return rateLimiiter;
-}
+export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const key = req.user_id || req.ip || "UNKNOWN";
+        await rateLimiter.consume(key);
+        next();
+    } catch {
+        res.status(429).json({ message: 'Too many requests. Please try again later.' });
+    }
+};
