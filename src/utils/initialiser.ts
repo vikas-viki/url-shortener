@@ -44,7 +44,7 @@ export const initializeSQS = () => {
     return sqs;
 }
 
-export const isAllEnvsLoaded =()=>{
+export const areAllEnvsLoaded =()=>{
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
     const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
     const GOOGLE_REDIRECT_URL = process.env.GOOGLE_REDIRECT_URL;
@@ -71,6 +71,12 @@ export const isAllEnvsLoaded =()=>{
 
     if(!JWT_SECRET){
         throw new Error("JWT secret not found!");
+    }
+
+    const SHORT_URL_HOST = process.env.SHORT_URL_HOST;
+    if(!SHORT_URL_HOST){
+        throw new Error("Short Url Host not found!");
+        
     }
 }
 

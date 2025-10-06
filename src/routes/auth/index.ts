@@ -85,6 +85,7 @@ router.get("/callback", async (req: Request, res: Response) => {
 
         return res.status(200).json({
             token,
+            expires_at: expiresAt,
             message: "Authentication successful. Use this token in the Authorization header as 'Bearer <token>' for protected routes."
         });
 

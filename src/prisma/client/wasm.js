@@ -181,7 +181,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -190,8 +189,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Users {\n  id         String   @id @default(uuid())\n  email      String\n  name       String\n  google_sub String   @unique\n  created_at DateTime @default(now())\n\n  access_token  String\n  refresh_token String?\n  token_expiry  DateTime\n\n  urls Urls[]\n\n  @@index([email])\n}\n\nmodel Urls {\n  id         String   @id @default(uuid())\n  user_id    String\n  alias      String\n  target_url String\n  topic      String   @default(\"GLOBAL\")\n  created_at DateTime @default(now())\n  is_active  Boolean  @default(true)\n\n  clicks Clicks[]\n  user   Users    @relation(fields: [user_id], references: [id])\n\n  @@index([user_id])\n  @@index([user_id, topic])\n}\n\nmodel Clicks {\n  id        String   @id @default(uuid())\n  url_id    String\n  ip        String\n  country   String\n  timestamp DateTime\n  url       Urls     @relation(fields: [url_id], references: [id])\n\n  @@index([url_id])\n}\n",
-  "inlineSchemaHash": "6a785d8b03ae2ea1befc111762ab95ac30f3c9546953bb8e0538651742e09cae",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Users {\n  id         String   @id @default(uuid())\n  email      String\n  name       String\n  google_sub String   @unique\n  created_at DateTime @default(now())\n\n  access_token  String\n  refresh_token String?\n  token_expiry  DateTime\n\n  urls Urls[]\n\n  @@index([email])\n}\n\nmodel Urls {\n  id         String   @id @default(uuid())\n  user_id    String\n  alias      String   @unique\n  target_url String\n  topic      String   @default(\"GLOBAL\")\n  created_at DateTime @default(now())\n  is_active  Boolean  @default(true)\n\n  clicks Clicks[]\n  user   Users    @relation(fields: [user_id], references: [id])\n\n  @@index([alias])\n  @@index([user_id])\n  @@index([user_id, topic])\n}\n\nmodel Clicks {\n  id        String   @id @default(uuid())\n  url_id    String\n  ip        String\n  country   String\n  timestamp DateTime\n  url       Urls     @relation(fields: [url_id], references: [id])\n\n  @@index([url_id])\n}\n",
+  "inlineSchemaHash": "bafd4719b791d1dc415cac7cb08b60b77db9fbbd37952eea48ef4acf0c58ac3d",
   "copyEngine": true
 }
 config.dirname = '/'

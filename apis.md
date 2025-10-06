@@ -2,18 +2,19 @@
 
 ## 1. Authentication
 
-### POST /auth/google
-Starts Google OAuth flow (returns Google OAuth URL or redirects).
+### POST /auth
+Starts Google OAuth flow (returns Google OAuth URL).
 
 ### POST /auth/callback
 Input:
 ```json
-{ "code": "<google_oauth_code>" }
+{ "code": "<google_oauth_code>" } // in query
 ```
 Output:
 ```json
 {
   "token": "<jwt_token>",
+  "message": "instruction",
   "expires_at": "2025-10-06T12:00:00Z"
 }
 ```
@@ -22,7 +23,7 @@ Output:
 
 ## 2. URL Management
 
-### POST /urls
+### POST /urls/create
 Create a new short URL.
 
 Request:
@@ -58,15 +59,25 @@ Response:
       "alias": "my-link",
       "target_url": "https://example.com",
       "topic": "marketing",
-      "clicks": 120,
-      "unique_visitors": 85
+      "created_at": "2025-10-06T12:00:00Z",
     }
   ]
 }
 ```
 
+
+### GET /urls/topics
+List all topics created by the user.
+
+Response:
+```json
+{
+  "topics": ["topic1", "topic2"]
+}
+```
+
 ### GET /urls/:id
-Get details of a single URL.
+Get details of a single URL (you can pass id or url alias), only present user's url can be found.
 
 Response:
 ```json
@@ -76,8 +87,6 @@ Response:
   "target_url": "https://example.com",
   "topic": "marketing",
   "created_at": "2025-10-06T12:00:00Z",
-  "clicks": 120,
-  "unique_visitors": 85
 }
 ```
 

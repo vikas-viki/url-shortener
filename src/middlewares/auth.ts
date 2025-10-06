@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { UserJWTPayload } from "../types/index.js";
 import { PRISMA_CLIENT } from "../index.js";
 
-export const isAuthHeaderValid = async (req: Request, res: Response, next: NextFunction) => {
+export const authorizeUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
 

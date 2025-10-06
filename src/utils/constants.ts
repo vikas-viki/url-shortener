@@ -1,0 +1,1 @@
+export const SHORT_URL_HOST= process.env.SHORT_URL_HOST;

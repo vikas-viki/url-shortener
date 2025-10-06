@@ -27,7 +27,7 @@ model Users {
 model Urls {
   id         String   @id @default(uuid())
   user_id    String
-  alias      String
+  alias      String @unique
   target_url String
   topic      String   @default("GLOBAL")
   created_at DateTime @default(now())
@@ -36,6 +36,7 @@ model Urls {
   clicks Clicks[]
   user   Users    @relation(fields: [user_id], references: [id])
 
+  @@index([alias])
   @@index([user_id])
   @@index([user_id, topic])
 }

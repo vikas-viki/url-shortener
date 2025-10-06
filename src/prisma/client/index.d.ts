@@ -4616,18 +4616,18 @@ export namespace Prisma {
 
   export type UrlsWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    alias?: string
     AND?: UrlsWhereInput | UrlsWhereInput[]
     OR?: UrlsWhereInput[]
     NOT?: UrlsWhereInput | UrlsWhereInput[]
     user_id?: StringFilter<"Urls"> | string
-    alias?: StringFilter<"Urls"> | string
     target_url?: StringFilter<"Urls"> | string
     topic?: StringFilter<"Urls"> | string
     created_at?: DateTimeFilter<"Urls"> | Date | string
     is_active?: BoolFilter<"Urls"> | boolean
     clicks?: ClicksListRelationFilter
     user?: XOR<UsersScalarRelationFilter, UsersWhereInput>
-  }, "id">
+  }, "id" | "alias">
 
   export type UrlsOrderByWithAggregationInput = {
     id?: SortOrder
