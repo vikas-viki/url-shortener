@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
 import { google } from "googleapis"
 import Redis from "ioredis";
-import { PrismaClient } from "../prisma/client";
+import { PrismaClient } from "../prisma/client/index.js";
 
 dotenv.config();
 

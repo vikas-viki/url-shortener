@@ -1,9 +1,9 @@
-import jwt from "jsonwebtoken";
-import express from "express";
-import type { Request, Response } from "express";
-import { GOOGLE_CLIENT, PRISMA_CLIENT } from "../..";
 import axios from "axios";
-import { GoogleSigninResponse } from "../../types";
+import express from "express";
+import jwt from "jsonwebtoken";
+import type { Request, Response } from "express";
+import { GoogleSigninResponse } from "../../types/index.js";
+import { GOOGLE_CLIENT, PRISMA_CLIENT } from "../../index.js";
 
 const router: express.Router = express.Router();
 
@@ -42,24 +42,30 @@ router.get("/callback", async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Failed to retrieve tokens. Please re-authenticate." });
         }
 
-        let user_id = req.user_id;
+        const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${access_token}` },
+        });
 
-        if (req.user_id) {
+        const userInfo = response.data as GoogleSigninResponse;
+        let user_id;
+
+        const user = await PRISMA_CLIENT.users.findFirst({
+            where:{
+                google_sub: userInfo.sub
+            }
+        });
+
+        if (user) {
             await PRISMA_CLIENT.users.update({
-                where: { id: req.user_id },
+                where: { id: user.id },
                 data: {
                     refresh_token,
                     access_token,
                     token_expiry: new Date(expiresAt)
                 }
             });
+            user_id = user.id;
         } else {
-            const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-                headers: { Authorization: `Bearer ${access_token}` },
-            });
-
-            const userInfo = response.data as GoogleSigninResponse;
-
             const user = await PRISMA_CLIENT.users.create({
                 data: {
                     token_expiry: new Date(expiresAt),

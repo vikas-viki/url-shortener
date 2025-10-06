@@ -1,5 +1,5 @@
 import { DeleteMessageCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
-import { SQS_CLIENT } from "..";
+import { SQS_CLIENT } from "../index.js";
 
 export const startPolling = async () => {
     while (true) {
