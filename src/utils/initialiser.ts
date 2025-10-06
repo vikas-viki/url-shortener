@@ -61,8 +61,8 @@ export const areAllEnvsLoaded =()=>{
 
     const SQS_ACCESS_KEY = process.env.SQS_ACCESS_KEY;
     const SQS_SECRET_ACCESS_KEY = process.env.SQS_SECRET_ACCESS_KEY;
-
-    if (!SQS_ACCESS_KEY || !SQS_SECRET_ACCESS_KEY) {
+    const SQS_URL = process.env.SQS_URL;
+    if (!SQS_ACCESS_KEY || !SQS_SECRET_ACCESS_KEY || !SQS_URL) {
         throw new Error("SQS credentials not found!");
 
     }

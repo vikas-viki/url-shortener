@@ -2,17 +2,17 @@ import express from "express";
 import helmet from "helmet";
 import type { Request, Response } from "express";
 import { initializeGoogleAuth, initializePrismaClient, initializeRedis, initializeSQS, areAllEnvsLoaded } from "./utils/initialiser.js";
-import { startPolling } from "./utils/pollSQS.js";
 import authRouter from "./routes/auth/index.js";
 import dotenv from 'dotenv';
 import { authorizeUser } from "./middlewares/auth.js";
 import urlRouter from "./routes/url/index.js";
+import requestIp from "request-ip";
+import { logUrlVisit } from "./utils/helpers.js";
 
 dotenv.config();
 const app = express();
 
 app.use(helmet());
-
 areAllEnvsLoaded();
 
 export const PRISMA_CLIENT = initializePrismaClient();
@@ -20,15 +20,51 @@ export const REDIS_CLIENT = initializeRedis();
 export const SQS_CLIENT = initializeSQS();
 export const GOOGLE_CLIENT = initializeGoogleAuth();
 
+app.use(requestIp.mw());
+
 app.use("/auth", authRouter);
 app.use("/urls", authorizeUser, urlRouter);
 app.get("/health", (req: Request, res: Response) => {
     res.status(200).json({ message: "Server is healthy" });
 });
+app.get("/:alias", async (req: Request, res: Response) => {
+    try {
+        const alias = req.params.alias?.trim();
 
-const PORT = process.env.PORT || 3000;  
+        if (!alias) {
+            return res.status(400).json({ message: "Invalid alias provided." });
+        }
+
+        logUrlVisit(req, alias);
+
+        const cachedURL = await REDIS_CLIENT.get(alias);
+        if (cachedURL) {
+            return res.redirect(cachedURL);
+        }
+
+        const url = await PRISMA_CLIENT.urls.findUnique({
+            where: { alias },
+            select: { target_url: true }
+        });
+
+        if (!url) {
+            return res.status(404).json({ message: "Short link not found." });
+        }
+
+        await REDIS_CLIENT.set(alias, url.target_url, "EX", 60 * 60); // cached for 1 hour
+
+        return res.redirect(url.target_url);
+    } catch (e) {
+        console.error("Error visiting alias:", e);
+        res.status(500).json({
+            message: "An unexpected error occurred while redirecting. Please try again later."
+        });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
-
-    // startPolling();
 });
+
+

@@ -27,7 +27,7 @@ model Users {
 model Urls {
   id         String   @id @default(uuid())
   user_id    String
-  alias      String @unique
+  alias      String   @unique
   target_url String
   topic      String   @default("GLOBAL")
   created_at DateTime @default(now())
@@ -46,6 +46,8 @@ model Clicks {
   url_id    String
   ip        String
   country   String
+  device    String
+  os        String
   timestamp DateTime
   url       Urls     @relation(fields: [url_id], references: [id])
 

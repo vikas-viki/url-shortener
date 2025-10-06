@@ -10,14 +10,25 @@ declare global {
 }
 
 export interface UserJWTPayload {
-    user_id: string
+  user_id: string
 }
 
 export type GoogleSigninResponse = {
-    sub: string,
-    name: string,
-    given_name: string,
-    picture: string,
-    email: string,
-    email_verified: boolean
+  sub: string,
+  name: string,
+  given_name: string,
+  picture: string,
+  email: string,
+  email_verified: boolean
+}
+
+export interface SQS_MESSAGE {
+    alias: string;
+    ip: string;
+    timeStamp: number;
+    device: string;
+    os: string;
+    browser: string
+    country: string
+    [key: string]: any;
 }

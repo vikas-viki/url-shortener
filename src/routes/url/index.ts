@@ -1,32 +1,33 @@
 import express, { Router } from "express";
 import type { Request, Response } from "express";
-import z from "zod";
-import { CreateURLScheema } from "../../utils/zod";
-import { PRISMA_CLIENT } from "../..";
-import { getUniqueAlias } from "../../utils/helpers";
-import { SHORT_URL_HOST } from "../../utils/constants";
+import { CreateURLScheema } from "../../utils/zod.js";
+import { PRISMA_CLIENT } from "../../index.js";
+import { getUniqueAlias } from "../../utils/helpers.js";
+import { SHORT_URL_HOST } from "../../utils/constants.js";
+import { generateLimitter } from "../../middlewares/rate-limit.js";
 
 const router: express.Router = Router();
 
-router.post("/create", async (req: Request, res: Response) => {
+router.post("/create", generateLimitter(60, 24 * 60 * 60), async (req: Request, res: Response) => {
     try {
         const body = CreateURLScheema.safeParse(req.body);
         if (!body.success) {
             return res.status(400).json({
-                message: "Invalid input provided for creating short URL"
-            })
+                message: "Invalid request body. Please check the input fields and try again."
+            });
         }
 
         const data = body.data;
-        if (!!data.custom_alias) {
-            const urls = await PRISMA_CLIENT.urls.findFirst({
-                where: {
-                    alias: data.custom_alias
-                }
+
+        if (data.custom_alias) {
+            const existing = await PRISMA_CLIENT.urls.findFirst({
+                where: { alias: data.custom_alias }
             });
 
-            if (urls) {
-                return res.status(400).json({ message: "Alias already taken, please provide another" });
+            if (existing) {
+                return res.status(400).json({
+                    message: "The requested alias is already in use. Please choose another."
+                });
             }
         } else {
             data.custom_alias = await getUniqueAlias();
@@ -46,23 +47,23 @@ router.post("/create", async (req: Request, res: Response) => {
             target_url: url.target_url,
             topic: url.topic,
             created_at: url.created_at,
-            message: `Your URL have been created.`,
-            short_url: `${SHORT_URL_HOST}/${data.custom_alias}`
+            short_url: `${SHORT_URL_HOST}/${data.custom_alias}`,
+            message: "Short URL created successfully."
         });
     } catch (e) {
-        res.status(500).json({ message: "Error creating short url, please try again!" });
+        res.status(500).json({
+            message: "An unexpected error occurred while creating the short URL. Please try again later."
+        });
     }
 });
 
 router.get("/", async (req: Request, res: Response) => {
     try {
         const urls = await PRISMA_CLIENT.urls.findMany({
-            where: {
-                user_id: req.user_id!
-            }
+            where: { user_id: req.user_id! }
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             urls: urls.map(u => ({
                 id: u.id,
                 alias: u.alias,
@@ -70,25 +71,27 @@ router.get("/", async (req: Request, res: Response) => {
                 topic: u.topic,
                 created_at: u.created_at
             }))
-        })
+        });
     } catch (e) {
-        res.status(500).json({ message: "Error getting shorturls, please try again!" })
+        res.status(500).json({
+            message: "Unable to fetch URLs at the moment. Please try again later."
+        });
     }
 });
 
 router.get("/topics", async (req: Request, res: Response) => {
     try {
         const urls = await PRISMA_CLIENT.urls.findMany({
-            where: {
-                user_id: req.user_id!
-            }
+            where: { user_id: req.user_id! }
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             topics: [...new Set(urls.map(u => u.topic.toString()))]
         });
     } catch (e) {
-        res.status(500).json({ message: "Error getting shorturls, please try again!" })
+        res.status(500).json({
+            message: "Failed to retrieve topics. Please try again later."
+        });
     }
 });
 
@@ -97,21 +100,22 @@ router.get("/:id", async (req: Request, res: Response) => {
         const urlId = req.params.id;
 
         if (!urlId) {
-            return res.status(400).json({ message: "Invalid url" });
+            return res.status(400).json({
+                message: "Invalid URL identifier provided."
+            });
         }
 
         const url = await PRISMA_CLIENT.urls.findFirst({
             where: {
                 user_id: req.user_id!,
-                OR: [
-                    { id: urlId },
-                    { alias: urlId }
-                ]
+                OR: [{ id: urlId }, { alias: urlId }]
             }
         });
 
         if (!url) {
-            return res.status(404).json({ message: "URL not found!" });
+            return res.status(404).json({
+                message: "No URL found matching the given identifier."
+            });
         }
 
         return res.status(200).json({
@@ -119,13 +123,13 @@ router.get("/:id", async (req: Request, res: Response) => {
             alias: url.alias,
             target_url: url.target_url,
             topic: url.topic,
-            created_at: url.created_at,
-        })
-
+            created_at: url.created_at
+        });
     } catch (e) {
-        res.status(500).json({ message: "Error getting short url data, please try again!" });
+        res.status(500).json({
+            message: "An unexpected error occurred while retrieving the URL. Please try again later."
+        });
     }
 });
-
 
 export default router;
