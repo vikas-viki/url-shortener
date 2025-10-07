@@ -3,7 +3,7 @@ version: "3.9"
 services:
   api:
     build: .
-    image: shorturl-server
+    image: 979188187252.dkr.ecr.ap-south-1.amazonaws.com/url-shortner:latest
     env_file: ./.env
     depends_on:
       - redis
@@ -15,7 +15,7 @@ services:
     command: ["pm2-runtime", "dist/index.js"]
 
   worker:
-    image: shorturl-server
+    image: 979188187252.dkr.ecr.ap-south-1.amazonaws.com/url-shortner:latest
     build: .
     env_file: ./.env
     depends_on:
