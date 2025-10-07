@@ -38,7 +38,7 @@ router.post("/create", rateLimitMiddleware, async (req: Request, res: Response) 
             data: {
                 user_id: req.user_id!,
                 alias: data.custom_alias,
-                topic: data.topic,
+                topic: data.topic || "GLOBAL",
                 target_url: data.target_url
             }
         });

@@ -12,7 +12,7 @@ router.get("/", (req: Request, res: Response) => {
     const link = GOOGLE_CLIENT.generateAuthUrl({
         access_type: "offline",
         prompt: "consent",
-        redirect_uri: "http://localhost:3000/auth/callback",
+        redirect_uri: process.env.GOOGLE_REDIRECT_URL!,
         scope: [
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email",

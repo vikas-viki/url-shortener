@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import helmet from "helmet";
 import type { Request, Response } from "express";
 import { initializeGoogleAuth, initializePrismaClient, initializeRedis, initializeSQS, areAllEnvsLoaded } from "./utils/initialiser.js";
@@ -13,6 +13,7 @@ import { REDIS_ALIAS_CACHE_TIME } from "./utils/constants.js";
 
 dotenv.config();
 const app = express();
+const apiRouter = Router();
 
 app.use(express.json());
 app.use(helmet());
@@ -25,15 +26,16 @@ export const GOOGLE_CLIENT = initializeGoogleAuth();
 
 app.use(requestIp.mw());
 
-app.use("/auth", authRouter);
-app.use("/urls", authorizeUser, urlRouter);
-app.use("/analytics", authorizeUser, analyticsRouter);
-app.get("/health", (req: Request, res: Response) => {
+app.use("/api", apiRouter);
+
+apiRouter.use("/auth", authRouter);
+apiRouter.use("/urls", authorizeUser, urlRouter);
+apiRouter.use("/analytics", authorizeUser, analyticsRouter);
+apiRouter.get("/health", (req: Request, res: Response) => {
     res.status(200).json({ message: "Server is healthy" });
 });
 app.get("/:alias", async (req: Request, res: Response) => {
     try {
-        console.log("alias req")
         const alias = req.params.alias?.trim();
 
         if (!alias) {

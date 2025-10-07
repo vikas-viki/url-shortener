@@ -136,17 +136,36 @@ router.get("/topic/:topic", async (req: Request, res: Response) => {
   }
 });
 
-
 router.get("/overall", async (req: Request, res: Response) => {
   try {
     const totalUrls = await PRISMA_CLIENT.urls.count();
     const totalClicks = await PRISMA_CLIENT.clicks.count();
 
-    const uniqueUserIPsRaw = await PRISMA_CLIENT.clicks.findMany({
+    const uniqueUsersRaw = await PRISMA_CLIENT.clicks.findMany({
       distinct: ["ip"],
       select: { ip: true }
     });
-    const totalUniqueUsers = uniqueUserIPsRaw.length;
+    const unique_user_count = uniqueUsersRaw.length;
+    const unique_users = uniqueUsersRaw.map(u => u.ip);
+
+    const uniqueCountriesRaw = await PRISMA_CLIENT.clicks.findMany({
+      distinct: ["country"],
+      select: { country: true }
+    });
+    const unique_country_count = uniqueCountriesRaw.length;
+    const unique_countries = uniqueCountriesRaw.map(c => c.country);
+
+    const uniqueDevicesRaw = await PRISMA_CLIENT.clicks.findMany({
+      distinct: ["device"],
+      select: { device: true }
+    });
+    const unique_device_count = uniqueDevicesRaw.length;
+
+    const uniqueOSRaw = await PRISMA_CLIENT.clicks.findMany({
+      distinct: ["os"],
+      select: { os: true }
+    });
+    const unique_os_count = uniqueOSRaw.length;
 
     const today = new Date();
     const startDate = new Date(today);
@@ -157,18 +176,23 @@ router.get("/overall", async (req: Request, res: Response) => {
       _count: { id: true },
       where: { timestamp: { gte: startDate } }
     });
-    
-    const clicksOverTime: Record<string, number> = {};
+
+    const usage_trends_last_30_days: Record<string, number> = {};
     clicksOverTimeRaw.forEach(c => {
       const day = c.timestamp.toISOString().split("T")[0];
-      clicksOverTime[day!] = (clicksOverTime[day!] || 0) + c._count.id;
+      usage_trends_last_30_days[day!] = (usage_trends_last_30_days[day!] || 0) + c._count.id;
     });
 
     res.status(200).json({
       total_urls: totalUrls,
       total_clicks: totalClicks,
-      total_unique_users: totalUniqueUsers,
-      usage_trends_last_30_days: clicksOverTime
+      unique_user_count,
+      unique_users,
+      unique_country_count,
+      unique_countries,
+      unique_device_count,
+      unique_os_count,
+      usage_trends_last_30_days
     });
 
   } catch (err) {
@@ -178,5 +202,6 @@ router.get("/overall", async (req: Request, res: Response) => {
     });
   }
 });
+
 
 export default router;
