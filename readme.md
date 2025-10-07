@@ -2,6 +2,9 @@
 
 ## [Postman Documentation](https://documenter.getpostman.com/view/43899618/2sB3QJNqYz)
 
+
+#### The server is hosted at url `https://shorturl.0xbuilder.in`,  visit `https://shorturl.0xbuilder.in/api/health` for health check.
+
 ---
 
 ## 🛠 Setup
@@ -43,7 +46,11 @@ It also provides endpoints for **analytics**, giving insights such as:
 - Country-wise statistics  
 - Trends over time  
 
-The project uses **Google OAuth2** for authentication and authorization.
+- The project uses **Google OAuth2** for authentication and authorization.
+- envs are handled via gpg encryption-decryption mechanism & git hooks.
+- Project is hosted in AWS using Github actions, Docker, ECR & EC2.
+- Routing happens through nginx (reverse-proxy)
+- Domain hosted using Godaddy.
 
 ---
 
@@ -76,8 +83,6 @@ Making a database call for every visit would be inefficient, so the architecture
 - Authentication uses `google-auth-library` & `googleapis` npm package to create google auth client, creation of auth urls and fetching user information.
 - Protected endpoints like `/urls/...` and `/analytics/...` are authenticated using `authorization` header in each request.
 - We use a seperate worker (file `src/utils/pollSQS.ts`) to handle sqs messages which are pushed to sqs on each short url visit, which is used for analytics.
-- envs are handled via gpg encryption-decryption mechanism & git hooks.
-- Project is hosted in AWS using Github actions, Docker, ECR & EC2.
 
 ![architecture](architecture.png)
 
