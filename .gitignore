@@ -2,3 +2,6 @@
 /node_modules
 /dist
 /src/generated/prisma
+
+# used test rate limit
+temp.js 

@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import { authorizeUser } from "./middlewares/auth.js";
 import urlRouter from "./routes/url/index.js";
 import requestIp from "request-ip";
-import { getOverAllAnalytics, logUrlVisit } from "./utils/helpers.js";
+import { logUrlVisit } from "./utils/helpers.js";
 import { REDIS_ALIAS_CACHE_TIME } from "./utils/constants.js";
 
 dotenv.config();
@@ -30,9 +30,6 @@ app.use("/urls", authorizeUser, urlRouter);
 app.use("/analytics", authorizeUser, analyticsRouter);
 app.get("/health", (req: Request, res: Response) => {
     res.status(200).json({ message: "Server is healthy" });
-});
-app.get("/overall", (req: Request, res: Response) =>{
-    getOverAllAnalytics(req, res);
 });
 app.get("/:alias", async (req: Request, res: Response) => {
     try {
