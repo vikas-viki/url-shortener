@@ -29,7 +29,7 @@ router.get("/alias/:alias", async (req: Request, res: Response) => {
         const unique_countries = [...new Set(clicks.map(c => c.country))];
         const rawData = clicks.map(c => ({
             ip: c.ip,
-            timestamp: c.timestamp,
+            timestamp: new Date(c.timestamp).getTime(),
             country: c.country,
             device: c.device,
             os: c.os
@@ -80,7 +80,7 @@ router.get("/topic/:topic", async (req: Request, res: Response) => {
                 unique_countries: [...new Set(urlClicks.map(c => c.country))],
                 rawData: urlClicks.map(c => ({
                     ip: c.ip,
-                    timestamp: c.timestamp,
+                    timestamp: new Date(c.timestamp).getTime(),
                     country: c.country,
                     device: c.device,
                     os: c.os

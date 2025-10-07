@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon",
+    "start:worker": "npm run build && node dist/utils/pollSQS.js",
     "build": "tsc -b && npm run copy-prisma",
     "copy-prisma": "cp -r src/prisma/ dist/",
     "start": "node dist/index.js",

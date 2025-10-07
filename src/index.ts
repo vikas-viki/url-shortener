@@ -14,6 +14,7 @@ import { REDIS_ALIAS_CACHE_TIME } from "./utils/constants.js";
 dotenv.config();
 const app = express();
 
+app.use(express.json());
 app.use(helmet());
 areAllEnvsLoaded();
 
@@ -30,8 +31,12 @@ app.use("/analytics", authorizeUser, analyticsRouter);
 app.get("/health", (req: Request, res: Response) => {
     res.status(200).json({ message: "Server is healthy" });
 });
+app.get("/overall", (req: Request, res: Response) =>{
+    getOverAllAnalytics(req, res);
+});
 app.get("/:alias", async (req: Request, res: Response) => {
     try {
+        console.log("alias req")
         const alias = req.params.alias?.trim();
 
         if (!alias) {
@@ -64,12 +69,9 @@ app.get("/:alias", async (req: Request, res: Response) => {
         });
     }
 });
-app.get("/overall", (req: Request, res: Response) =>{
-    getOverAllAnalytics(req, res);
-});
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(+PORT, '0.0.0.0',() => {
     console.log(`Server started on port ${PORT}`);
 });
 

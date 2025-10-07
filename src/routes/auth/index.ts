@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import type { Request, Response } from "express";
 import { GoogleSigninResponse } from "../../types/index.js";
 import { GOOGLE_CLIENT, PRISMA_CLIENT } from "../../index.js";
+import { formatDate } from "../../utils/helpers.js";
 
 const router: express.Router = express.Router();
 
@@ -50,7 +51,7 @@ router.get("/callback", async (req: Request, res: Response) => {
         let user_id;
 
         const user = await PRISMA_CLIENT.users.findFirst({
-            where:{
+            where: {
                 google_sub: userInfo.sub
             }
         });
@@ -85,7 +86,7 @@ router.get("/callback", async (req: Request, res: Response) => {
 
         return res.status(200).json({
             token,
-            expires_at: expiresAt,
+            expires_at: formatDate(expiresAt),
             message: "Authentication successful. Use this token in the Authorization header as 'Bearer <token>' for protected routes."
         });
 

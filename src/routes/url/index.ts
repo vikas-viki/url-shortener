@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import type { Request, Response } from "express";
 import { CreateURLScheema } from "../../utils/zod.js";
 import { PRISMA_CLIENT } from "../../index.js";
-import { getUniqueAlias } from "../../utils/helpers.js";
+import { formatDate, getUniqueAlias } from "../../utils/helpers.js";
 import { SHORT_URL_HOST } from "../../utils/constants.js";
 import { rateLimitMiddleware } from "../../middlewares/rate-limit.js";
 
@@ -13,7 +13,8 @@ router.post("/create", rateLimitMiddleware, async (req: Request, res: Response) 
         const body = CreateURLScheema.safeParse(req.body);
         if (!body.success) {
             return res.status(400).json({
-                message: "Invalid request body. Please check the input fields and try again."
+                message: "Invalid request body. Please check the input fields and try again.",
+                reason: body.error.message
             });
         }
 
@@ -46,7 +47,7 @@ router.post("/create", rateLimitMiddleware, async (req: Request, res: Response) 
             id: url.id,
             target_url: url.target_url,
             topic: url.topic,
-            created_at: url.created_at,
+            created_at: formatDate(url.created_at),
             short_url: `${SHORT_URL_HOST}/${data.custom_alias}`,
             message: "Short URL created successfully."
         });
@@ -67,9 +68,10 @@ router.get("/", async (req: Request, res: Response) => {
             urls: urls.map(u => ({
                 id: u.id,
                 alias: u.alias,
+                short_url:  `${SHORT_URL_HOST}/${u.alias}`,
                 target_url: u.target_url,
                 topic: u.topic,
-                created_at: u.created_at
+                created_at: formatDate(u.created_at)
             }))
         });
     } catch (e) {
@@ -123,7 +125,7 @@ router.get("/:id", async (req: Request, res: Response) => {
             alias: url.alias,
             target_url: url.target_url,
             topic: url.topic,
-            created_at: url.created_at
+            created_at: formatDate(url.created_at)
         });
     } catch (e) {
         res.status(500).json({
