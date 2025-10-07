@@ -25,7 +25,6 @@ export const startPolling = async () => {
 export const fetchMessages = async (waitTime = 20) => {
     try {
         const SQS_URL = process.env.SQS_URL;
-        console.log(SQS_URL);
         const resp = await SQS_CLIENT.send(
             new ReceiveMessageCommand({
                 QueueUrl: SQS_URL!.toString(),
@@ -162,7 +161,10 @@ export const pollForMessages = async () => {
     console.log("Processed batch messages by URL ID:", messagesByUrlId);
 }
 
+
 (async () => {
+    const poll= process.env.POLL || false;
+    if (!poll) return;
     console.log("Started polling SQS!");
     startPolling();
 })();

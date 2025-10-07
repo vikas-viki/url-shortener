@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    image: shorturl-server
+    env_file: ./.env.production
+    depends_on:
+      - redis
+    ports: 
+      - "3000:3000"
+    environment:
+      - POLL=false
+      - NODE_ENV=production
+    command: ["pm2-runtime", "dist/index.js"]
+
+  worker:
+    image: shorturl-server
+    build: .
+    env_file: ./.env.production
+    depends_on:
+      - redis
+    environment:
+      - NODE_ENV=production
+      - POLL=true
+    command: ["pm2-runtime", "dist/utils/pollSQS.js"]
+
+  redis:
+    image: redis:7
+  

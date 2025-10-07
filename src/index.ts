@@ -42,8 +42,7 @@ app.get("/:alias", async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Invalid alias provided." });
         }
 
-        logUrlVisit(req, alias);
-
+        
         const cachedURL = await REDIS_CLIENT.get(alias);
         if (cachedURL) {
             return res.redirect(cachedURL);
@@ -57,7 +56,9 @@ app.get("/:alias", async (req: Request, res: Response) => {
         if (!url) {
             return res.status(404).json({ message: "Short link not found." });
         }
-
+        
+        logUrlVisit(req, alias);
+        
         await REDIS_CLIENT.set(alias, url.target_url, "EX", REDIS_ALIAS_CACHE_TIME); // cached for 1 hour
 
         return res.redirect(url.target_url);
