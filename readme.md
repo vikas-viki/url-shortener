@@ -29,7 +29,7 @@ npm run start:worker
 docker compose up --build
 ```
 
-Visit `http://localhost:3000/api/health` to check if the server is running.
+Visit `http://localhost:5000/api/health` to check if the server is running.
 
 ---
 
