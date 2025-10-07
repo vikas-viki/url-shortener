@@ -6,3 +6,6 @@
 
 # used test rate limit
 temp.js 
+.gpg_passphrase
+
+*.pem
