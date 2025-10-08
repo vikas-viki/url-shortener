@@ -35,7 +35,6 @@ export const authorizeUser = async (req: Request, res: Response, next: NextFunct
 
         next();
     } catch (err) {
-        console.error(err);
         return res.status(401).json({ message: "Invalid or expired JWT. Please log in again." });
     }
 };

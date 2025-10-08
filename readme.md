@@ -1,105 +1,129 @@
-# URL Shortener API
+# 🌐 URL Shortener API
 
-## [Postman Documentation](https://documenter.getpostman.com/view/43899618/2sB3QJNqYz)
-
-
-#### The server is hosted at url `https://shorturl.0xbuilder.in`,  visit `https://shorturl.0xbuilder.in/api/health` for health check.
+A scalable and production-grade **URL Shortener** that supports authentication, analytics, and high availability.
 
 ---
 
-## 🛠 Setup
+## 📘 Documentation & Deployment
 
+- **API Documentation:** [Postman Collection](https://documenter.getpostman.com/view/43899618/2sB3QJNqYz)  
+- **Base URL:** `https://shorturl.0xbuilder.in`  
+- **Health Check:** [https://shorturl.0xbuilder.in/api/health](https://shorturl.0xbuilder.in/api/health)
+
+---
+
+## 🛠️ Setup Instructions
+
+### Clone & Install
 ```bash
 git clone git@github.com:vikas-viki/url-shortener.git
 cd url-shortener
 npm install
 
-# Add the environment variables defined as per `.env.example`
+# Add required environment variables as per `.env.example`
 ```
 
-**`normal`**
+### Run Locally
+
+**Standard (Node.js):**
 ```bash
-# To start the main server
+# Start the main server
 npm run dev
 
-# To start the SQS poller
+# Start the SQS worker
 npm run start:worker
 ```
 
-**`using docker compose`**
-
+**Using Docker Compose:**
 ```bash
 docker compose up --build
 ```
 
-Visit `http://localhost:5000/api/health` to check if the server is running.
+Once running, visit [http://localhost:5000/api/health](http://localhost:5000/api/health) to verify the server status.
 
 ---
 
-## 📘 Project Overview
+## 🧩 Project Overview
 
-This is a **URL shortening** project where a user can authenticate using Google OAuth and create short URLs with an alias of their choice.  
-It also provides endpoints for **analytics**, giving insights such as:
+This service enables authenticated users to **shorten URLs**, manage them by **topics**, and access **analytics** at multiple levels.
 
-- Unique visits  
-- Device and OS breakdowns  
-- Country-wise statistics  
-- Trends over time  
+### Core Capabilities
+- Secure Google OAuth2-based authentication  
+- Short URL creation with optional aliases and topics  
+- Real-time analytics (unique users, device/OS stats, geolocation trends)  
+- High-performance caching with Redis  
+- Rate limiting for abuse prevention  
 
-- The project uses **Google OAuth2** for authentication and authorization.
-- envs are handled via gpg encryption-decryption mechanism & git hooks.
-- Project is hosted in AWS using Github actions, Docker, ECR & EC2.
-- Routing happens through nginx (reverse-proxy)
-- Domain hosted using Godaddy.
+### Deployment Stack
+- **Hosting:** AWS EC2 (Dockerized setup)  
+- **CI/CD:** GitHub Actions → AWS ECR → EC2  
+- **Routing:** Nginx (reverse proxy)  
+- **Domain:** Managed via GoDaddy  
+- **Secrets:** GPG-encrypted `.env` files with Git hooks
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
 - Google OAuth2 authentication  
-- Short URL creation (limit: 60 per 5 hours)  
-- Detailed analytics (alias and topic based)  
-- Secure rate limiting and validation mechanisms  
+- Alias & topic-based URL creation (limit: 60 per 5 hours)  
+- Real-time analytics dashboard (per URL and per topic)  
+- Secure rate limiting and input validation  
+- Redis caching for hot links
 
 ---
 
-## 🧠 Challenges
+## 🧠 Technical Challenges & Solutions
 
-One major challenge was efficiently processing URL visits at scale - each URL can receive millions of hits.  
-Making a database call for every visit would be inefficient, so the architecture leverages **AWS SQS** for decoupled event processing and a **custom batching mechanism** for optimized DB writes.
+**Challenge:** Efficiently processing millions of URL visits without overloading the database.  
+**Solution:** Introduced **AWS SQS** for decoupled event processing. Each redirect pushes analytics data to an SQS queue, processed in batches by a dedicated worker, drastically improving throughput and reliability.
 
 ---
 
 ## 🚀 Future Improvements
 
-- Separate dedicated redirection server (scalable independently)  
-- Extended controls: deletion, expiration, and management of short URLs  
-- Support for custom domains  
-- Horizontal scaling using a load balancer and multiple stateless instances  
+- Dedicated redirection microservice for independent scaling  
+- Advanced URL controls (deletion, expiration, custom domains)  
+- Horizontal scaling via load balancer  
+- Role-based access control & analytics dashboard UI
 
 ---
 
-## 🏗 Architecture
-- Authentication uses `google-auth-library` & `googleapis` npm package to create google auth client, creation of auth urls and fetching user information.
-- Protected endpoints like `/urls/...` and `/analytics/...` are authenticated using `authorization` header in each request.
-- We use a seperate worker (file `src/utils/pollSQS.ts`) to handle sqs messages which are pushed to sqs on each short url visit, which is used for analytics.
+## 🏗️ Architecture Overview
 
-![architecture](architecture.png)
+- **Authentication:** Google OAuth using `google-auth-library` & `googleapis`  
+- **Protected Routes:** `/urls/...`, `/analytics/...` secured via JWT in `Authorization` header  
+- **Event Queue:** SQS integration for asynchronous analytics processing  
+- **Worker:** `src/utils/pollSQS.ts` consumes analytics events and writes to DB  
+
+![System Architecture](architecture.png)
 
 ---
 
-## 📡 API Overview
+## ⚙️ Tech Stack
 
-The API is built using **Node.js**, **Express**, **PostgreSQL**, and **Redis**, along with libraries like:
+| Component | Technology |
+|------------|-------------|
+| Backend | Node.js (Express) |
+| Database | PostgreSQL (via Prisma ORM) |
+| Cache | Redis |
+| Queue | AWS SQS |
+| Auth | Google OAuth 2.0 |
+| CI/CD | GitHub Actions + Docker + AWS ECR |
+| Validation | Zod |
+| Rate Limiting | rate-limiter-flexible |
+| Security | Helmet |
+| Utilities | Nanoid, UA-Parser-JS |
 
-- **Prisma** – ORM for database operations  
-- **Zod** – Schema validation  
-- **Rate-limiter-flexible** – Short URL creation rate limiting  
-- **Helmet** – Security headers  
-- **AWS SDK** – Integration with SQS  
-- **Nanoid** – Unique alias generation  
-- **UA-Parser-JS** – Device and OS detection  
+---
 
-The backend is deployed via **AWS ECS**, with Docker images stored in **AWS ECR**, and CI/CD handled through **GitHub Actions**.
+## 📦 API Overview
 
-**Base URL:** `https://shorturl.0xbuilder.in`
+The API provides endpoints for:  
+- User authentication (Google OAuth2)  
+- URL shortening and management  
+- Analytics aggregation (per URL, topic, and overall system-level)  
+
+**Base URL:** `https://shorturl.0xbuilder.in`  
+
+For detailed endpoints, parameters, and schemas, refer to the [Postman Documentation](https://documenter.getpostman.com/view/43899618/2sB3QJNqYz).

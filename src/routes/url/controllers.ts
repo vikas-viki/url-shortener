@@ -1,14 +1,10 @@
-import express, { Router } from "express";
 import type { Request, Response } from "express";
 import { CreateURLScheema } from "../../utils/zod.js";
 import { PRISMA_CLIENT } from "../../index.js";
 import { formatDate, getUniqueAlias } from "../../utils/helpers.js";
 import { SHORT_URL_HOST } from "../../utils/constants.js";
-import { rateLimitMiddleware } from "../../middlewares/rate-limit.js";
 
-const router: express.Router = Router();
-
-router.post("/create", rateLimitMiddleware, async (req: Request, res: Response) => {
+export const createShortUrlHandler = async (req: Request, res: Response) => {
     try {
         const body = CreateURLScheema.safeParse(req.body);
         if (!body.success) {
@@ -56,9 +52,9 @@ router.post("/create", rateLimitMiddleware, async (req: Request, res: Response) 
             message: "An unexpected error occurred while creating the short URL. Please try again later."
         });
     }
-});
+}
 
-router.get("/", async (req: Request, res: Response) => {
+export const getAllUrlsHanlder = async (req: Request, res: Response) => {
     try {
         const urls = await PRISMA_CLIENT.urls.findMany({
             where: { user_id: req.user_id! }
@@ -68,7 +64,7 @@ router.get("/", async (req: Request, res: Response) => {
             urls: urls.map(u => ({
                 id: u.id,
                 alias: u.alias,
-                short_url:  `${SHORT_URL_HOST}/${u.alias}`,
+                short_url: `${SHORT_URL_HOST}/${u.alias}`,
                 target_url: u.target_url,
                 topic: u.topic,
                 created_at: formatDate(u.created_at)
@@ -79,9 +75,9 @@ router.get("/", async (req: Request, res: Response) => {
             message: "Unable to fetch URLs at the moment. Please try again later."
         });
     }
-});
+}
 
-router.get("/topics", async (req: Request, res: Response) => {
+export const getAllTopicsHandler = async (req: Request, res: Response) => {
     try {
         const urls = await PRISMA_CLIENT.urls.findMany({
             where: { user_id: req.user_id! }
@@ -95,9 +91,9 @@ router.get("/topics", async (req: Request, res: Response) => {
             message: "Failed to retrieve topics. Please try again later."
         });
     }
-});
+}
 
-router.get("/:id", async (req: Request, res: Response) => {
+export const getAliasUrlIdDetailsHandler = async (req: Request, res: Response) => {
     try {
         const urlId = req.params.id;
 
@@ -132,6 +128,4 @@ router.get("/:id", async (req: Request, res: Response) => {
             message: "An unexpected error occurred while retrieving the URL. Please try again later."
         });
     }
-});
-
-export default router;
+}

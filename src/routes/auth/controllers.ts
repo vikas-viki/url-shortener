@@ -1,14 +1,11 @@
-import axios from "axios";
-import express from "express";
 import jwt from "jsonwebtoken";
 import type { Request, Response } from "express";
 import { GoogleSigninResponse } from "../../types/index.js";
-import { GOOGLE_CLIENT, PRISMA_CLIENT } from "../../index.js";
+import { PRISMA_CLIENT, GOOGLE_CLIENT } from "../../index.js";
 import { formatDate } from "../../utils/helpers.js";
+import axios from "axios";
 
-const router: express.Router = express.Router();
-
-router.get("/", (req: Request, res: Response) => {
+export const getAuthUrlHandler = (req: Request, res: Response) => {
     const link = GOOGLE_CLIENT.generateAuthUrl({
         access_type: "offline",
         prompt: "consent",
@@ -23,9 +20,9 @@ router.get("/", (req: Request, res: Response) => {
         url: link,
         message: "Visit the above URL to authenticate with Google."
     });
-});
+}
 
-router.get("/callback", async (req: Request, res: Response) => {
+export const authCallbackHandler = async (req: Request, res: Response) => {
     const code = req.query.code?.toString();
 
     if (!code) {
@@ -94,6 +91,4 @@ router.get("/callback", async (req: Request, res: Response) => {
         console.error(err);
         return res.status(500).json({ message: "An error occurred during authentication. Please try again later." });
     }
-});
-
-export default router;
+}

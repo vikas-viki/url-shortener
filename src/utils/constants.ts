@@ -7,5 +7,5 @@ export const DEFAULT_IP_COUNTRY = "UNKNOWN";
 
 export const DEFAULT_SQS_MESSAGE_GROUP_ID= "url-shortening-group";
 
-export const SQS_GET_BATCH_WAIT_TIME = 0 * 60 * 1000;
+export const SQS_GET_BATCH_WAIT_TIME = 1 * 60 * 1000; // 1 min
 export const SQS_GET_BATCH_SIZE = 50;

@@ -1,7 +1,7 @@
 import geoIp from "geoip-lite";
 import { SQS_MESSAGE } from "../types/index.js";
 import { DEFAULT_IP_COUNTRY, REDIS_URLID_CACHE_TIME, SQS_GET_BATCH_SIZE, SQS_GET_BATCH_WAIT_TIME } from "./constants.js";
-import { DeleteMessageCommand, ReceiveMessageCommand, ReceiveMessageResult } from "@aws-sdk/client-sqs";
+import { DeleteMessageCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
 import { initializePrismaClient, initializeRedis, initializeSQS, initializeGoogleAuth, areAllEnvsLoaded } from "./initialiser.js";
 
 areAllEnvsLoaded();
@@ -163,7 +163,7 @@ export const pollForMessages = async () => {
 
 
 (async () => {
-    const poll= process.env.POLL || false;
+    const poll= process.env.POLL || false; // env is set seperately in docker compose to optionally run worker
     if (!poll) return;
     console.log("Started polling SQS!");
     startPolling();
